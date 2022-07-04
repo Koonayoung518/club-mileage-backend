@@ -14,6 +14,7 @@ import com.club.mileage.backend.repository.UserRepository;
 import com.club.mileage.backend.web.dto.RequestReview;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class ReviewService implements ReviewServiceInterface {
     private final ReviewRepository reviewRepository;
     private final PlaceRepository placeRepository;
 
+    @Transactional
     public void registerReview(String userId, List<MultipartFile> fileList,
                                                   RequestReview.register requestDto){
         User user = userRepository.findById(userId).orElseThrow(()-> new NotFoundUserException());

@@ -1,7 +1,6 @@
 package com.club.mileage.backend.serivce;
 
 import com.club.mileage.backend.entity.Place;
-import com.club.mileage.backend.entity.User;
 import com.club.mileage.backend.repository.PlaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

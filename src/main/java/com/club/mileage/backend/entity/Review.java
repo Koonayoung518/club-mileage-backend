@@ -1,6 +1,5 @@
 package com.club.mileage.backend.entity;
 
-import com.club.mileage.backend.core.type.EventType;
 import com.club.mileage.backend.core.type.ReviewType;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +19,7 @@ import java.util.UUID;
 public class Review {
     @Id
     @Column(name = "review_id")
-    private String id = UUID.randomUUID().toString();
+    private String reviewId = UUID.randomUUID().toString();
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -29,8 +28,8 @@ public class Review {
     @Column(name = "content")
     private String content;
 
-    @OneToMany(mappedBy = "attached_photo")
-    private List<AttachedPhoto> photoList = new ArrayList<>();
+    @OneToMany(mappedBy = "review")
+    private List<Photo> photoList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id")
@@ -45,10 +44,14 @@ public class Review {
     private ReviewType reviewType;
 
     @Builder
-    public Review(String content, Place place ,User user, ReviewType reviewType){
+    public Review(String content, Place place , User user, ReviewType reviewType){
         this.content = content;
         this.user = user;
         this.place = place;
         this.reviewType = reviewType;
+    }
+
+    public void addPhoto(Photo photo){
+        this.photoList.add(photo);
     }
 }

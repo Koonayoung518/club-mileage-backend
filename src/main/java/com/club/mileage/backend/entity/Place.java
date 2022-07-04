@@ -16,7 +16,7 @@ import java.util.UUID;
 public class Place {
     @Id
     @Column(name = "place_id")
-    private String id = UUID.randomUUID().toString();
+    private String placeId = UUID.randomUUID().toString();
 
     @Column(name = "place_name")
     private String placeName;

@@ -15,7 +15,7 @@ public class UserService {
     public User mockUser(){
         //임의의 유저
         User user = User.builder()
-                .nickName("유저")
+                .nickname("유저")
                 .build();
         user = userRepository.save(user);
         return user;

@@ -1,16 +1,17 @@
 package com.club.mileage.backend.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.UUID;
 
+@Table(name = "photo")
 @Entity
 @Getter
-@Table(name = "attached_photo")
 @NoArgsConstructor
-public class AttachedPhoto {
+public class Photo {
     @Id
     @Column(name = "photo_id")
     private String id = UUID.randomUUID().toString();
@@ -22,4 +23,9 @@ public class AttachedPhoto {
     @JoinColumn(name = "review_id")
     private Review review;
 
+    @Builder
+    public Photo(String url, Review review){
+        this.url = url;
+        this.review = review;
+    }
 }

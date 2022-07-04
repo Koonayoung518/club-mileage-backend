@@ -2,6 +2,7 @@ package com.club.mileage.backend.entity;
 
 import com.club.mileage.backend.core.type.ActionType;
 import com.club.mileage.backend.core.type.EventType;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -39,4 +40,13 @@ public class PointHistory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Builder
+    public PointHistory(EventType eventType, ActionType actionType, Long point, String details, User user){
+        this.eventType = eventType;
+        this.actionType = actionType;
+        this.point = point;
+        this.details = details;
+        this.user = user;
+    }
 }

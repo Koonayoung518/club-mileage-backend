@@ -11,15 +11,15 @@ import java.util.UUID;
 
 @Entity
 @Getter
-@Table(name = "user")
+@Table(name = "users")
 @NoArgsConstructor
 public class User {
     @Id
     @Column(name = "user_id")
-    private String id = UUID.randomUUID().toString();
+    private String userId = UUID.randomUUID().toString();
 
     @Column(name = "nickname")
-    private String nickName;
+    private String nickname;
 
     @OneToMany(mappedBy = "user")
     private List<Review> reviewList = new ArrayList<>();
@@ -30,8 +30,17 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<PointHistory> pointHistoryList = new ArrayList<>();
 
+    @OneToOne(mappedBy = "user")
+    private PointTotal pointTotal;
+
     @Builder
-    public User(String nickName){
-        this.nickName = nickName;
+    public User(String nickname){
+        this.nickname = nickname;
+    }
+
+    public void updatePoint(Point point, PointHistory pointHistory,PointTotal pointTotal ){
+        this.pointList.add(point);
+        this.pointHistoryList.add(pointHistory);
+        this.pointTotal = pointTotal;
     }
 }
