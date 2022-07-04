@@ -1,5 +1,8 @@
 package com.club.mileage.backend.entity;
 
+import com.club.mileage.backend.core.type.EventType;
+import com.club.mileage.backend.core.type.ReviewType;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -30,7 +33,22 @@ public class Review {
     private List<AttachedPhoto> photoList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "place_id")
+    private Place place;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name = "review_type")
+    @Enumerated(value = EnumType.STRING)
+    private ReviewType reviewType;
+
+    @Builder
+    public Review(String content, Place place ,User user, ReviewType reviewType){
+        this.content = content;
+        this.user = user;
+        this.place = place;
+        this.reviewType = reviewType;
+    }
 }

@@ -1,5 +1,6 @@
 package com.club.mileage.backend.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,7 +18,14 @@ public class Place {
     @Column(name = "place_id")
     private String id = UUID.randomUUID().toString();
 
+    @Column(name = "place_name")
+    private String placeName;
+
     @OneToMany(mappedBy = "place")
     private List<Review> reviewList = new ArrayList<>();
 
+    @Builder
+    public Place (String placeName){
+        this.placeName = placeName;
+    }
 }

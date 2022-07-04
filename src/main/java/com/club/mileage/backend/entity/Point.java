@@ -35,4 +35,5 @@ public class Point {
     @JoinColumn(name = "user_id")
     private User user;
 
+
 }
