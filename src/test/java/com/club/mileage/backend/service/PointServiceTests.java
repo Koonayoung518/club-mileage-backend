@@ -1,6 +1,5 @@
 package com.club.mileage.backend.service;
 
-import com.club.mileage.backend.core.type.ActionType;
 import com.club.mileage.backend.core.type.ReviewType;
 import com.club.mileage.backend.entity.*;
 import com.club.mileage.backend.repository.*;

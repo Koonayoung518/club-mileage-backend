@@ -28,4 +28,8 @@ public class Place {
     public Place (String placeName){
         this.placeName = placeName;
     }
+
+    public void addReview(Review review){
+        this.reviewList.add(review);
+    }
 }

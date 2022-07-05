@@ -46,4 +46,7 @@ public class User {
     public void updatePointTotal(PointTotal pointTotal){
         this.pointTotal = pointTotal;
     }
+    public void addReview(Review review){
+        this.reviewList.add(review);
+    }
 }
