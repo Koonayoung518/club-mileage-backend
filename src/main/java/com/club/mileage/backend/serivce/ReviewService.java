@@ -27,10 +27,9 @@ public class ReviewService implements ReviewServiceInterface {
     private final PlaceRepository placeRepository;
 
     @Transactional
-    public void registerReview(String userId, List<MultipartFile> fileList,
-                                                  RequestReview.register requestDto){
-        User user = userRepository.findById(userId).orElseThrow(()-> new NotFoundUserException());
-        //명소가 있다는 가정하에
+    public void registerReview(List<MultipartFile> fileList, RequestReview.register requestDto){
+        User user = userRepository.findById(requestDto.getUserId()).orElseThrow(()-> new NotFoundUserException());
+
         Place place = placeRepository.findById(requestDto.getPlaceId()).orElseThrow(()->new NotFoundPlaceException());
 
         //조건 - 한 사용자는 장소마다 리뷰를 1개만 작성할 수 있다

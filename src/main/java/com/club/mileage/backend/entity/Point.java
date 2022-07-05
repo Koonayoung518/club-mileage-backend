@@ -43,4 +43,7 @@ public class Point {
         this.targetId = targetId;
         this.user = user;
     }
+    public void updatePoint(Long point){
+        this.point = point;
+    }
 }

@@ -24,8 +24,7 @@ public class ReviewController {
     @PostMapping("/review")
     public ResponseEntity<ResponseMessage> registerReview(@RequestPart(name = "file")List<MultipartFile> fileList,
                                                           @RequestPart(name = "requestDto")RequestReview.register requestDto){
-        User user = userService.mockUser();
-        reviewService.registerReview(user.getUserId(),fileList,requestDto);
+        reviewService.registerReview(fileList,requestDto);
 
         return new ResponseEntity<>(ResponseMessage.builder()
                 .status(HttpStatus.OK.value())

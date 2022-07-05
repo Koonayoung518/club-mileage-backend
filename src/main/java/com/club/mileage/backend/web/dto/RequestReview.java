@@ -8,6 +8,7 @@ public class RequestReview {
     @Builder
     @Data
     public static class register{
+        private String userId;
         private String content;
         private String placeId;
     }

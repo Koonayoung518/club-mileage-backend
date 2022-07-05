@@ -12,4 +12,6 @@ public interface PointRepository extends JpaRepository<Point, Long> {
     Long findByTotal(User user);
 
     List<Point> findByUser(User user);
+
+    Point findByUserAndTargetId(User user, String targetId);
 }

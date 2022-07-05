@@ -38,9 +38,12 @@ public class User {
         this.nickname = nickname;
     }
 
-    public void updatePoint(Point point, PointHistory pointHistory,PointTotal pointTotal ){
+    public void updatePoint(Point point, PointHistory pointHistory){
         this.pointList.add(point);
         this.pointHistoryList.add(pointHistory);
+    }
+
+    public void updatePointTotal(PointTotal pointTotal){
         this.pointTotal = pointTotal;
     }
 }

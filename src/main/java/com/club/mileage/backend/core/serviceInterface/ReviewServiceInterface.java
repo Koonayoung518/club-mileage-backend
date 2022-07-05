@@ -9,6 +9,6 @@ import java.util.List;
 
 
 public interface ReviewServiceInterface {
-    void registerReview(String userId, List<MultipartFile> fileList, RequestReview.register requestDto);
+    void registerReview(List<MultipartFile> fileList, RequestReview.register requestDto);
 
 }
