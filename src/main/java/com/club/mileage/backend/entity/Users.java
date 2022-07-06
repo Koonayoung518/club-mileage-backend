@@ -13,28 +13,28 @@ import java.util.UUID;
 @Getter
 @Table(name = "users")
 @NoArgsConstructor
-public class User {
+public class Users {
     @Id
-    @Column(name = "user_id")
-    private String userId = UUID.randomUUID().toString();
+    @Column(name = "users_id")
+    private String usersId = UUID.randomUUID().toString();
 
     @Column(name = "nickname")
     private String nickname;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "users")
     private List<Review> reviewList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "users")
     private List<Point> pointList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "users")
     private List<PointHistory> pointHistoryList = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "users")
     private PointTotal pointTotal;
 
     @Builder
-    public User(String nickname){
+    public Users(String nickname){
         this.nickname = nickname;
     }
 

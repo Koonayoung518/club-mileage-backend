@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @ActiveProfiles("test")
 public class PointServiceTests {
     @Autowired
-    private UserRepository userRepository;
+    private UsersRepository usersRepository;
     @Autowired
     private ReviewRepository reviewRepository;
     @Autowired
@@ -43,10 +43,16 @@ public class PointServiceTests {
     @Transactional
     @DisplayName("리뷰 작성 포인트 적립 테스트(텍스트만 작성 - 성공)")
     void addPointWhenOnlyTextTest(){
-        User user = User.builder()
+        Users users = Users.builder()
                 .nickname("nickname")
                 .build();
-        user = userRepository.save(user);
+        users = usersRepository.save(users);
+        PointTotal pointTotal = PointTotal.builder()
+                .total(0L)
+                .users(users)
+                .build();
+        pointTotalRepository.save(pointTotal);
+        users.updatePointTotal(pointTotal);
         //장소
         Place place = Place.builder()
                 .placeName("테스트 장소")
@@ -55,7 +61,7 @@ public class PointServiceTests {
         //리뷰 작성
         Review review = Review.builder()
                 .content("리뷰 내용")
-                .user(user)
+                .users(users)
                 .place(place)
                 .reviewType(ReviewType.NOT_FIRST)
                 .build();
@@ -66,11 +72,11 @@ public class PointServiceTests {
                 .action("ADD")
                 .reviewId(review.getReviewId())
                 .content(review.getContent())
-                .userId(user.getUserId())
+                .userId(users.getUsersId())
                 .placeId(place.getPlaceId())
                 .build();
         pointService.addReviewPoint(requestDto);
-        List<Point> pointList = pointRepository.findByUser(user);
+        List<Point> pointList = pointRepository.findByUsers(users);
         for(Point point : pointList){
             assertEquals(point.getPoint(), 1);
         }
@@ -79,10 +85,16 @@ public class PointServiceTests {
     @Transactional
     @DisplayName("리뷰 작성 포인트 적립 테스트(첫 리뷰 + 텍스트만 작성 - 성공)")
     void addPointWhenFirstAndOnlyTextTest(){
-        User user = User.builder()
+        Users users = Users.builder()
                 .nickname("nickname")
                 .build();
-        user = userRepository.save(user);
+        users = usersRepository.save(users);
+        PointTotal pointTotal = PointTotal.builder()
+                .total(0L)
+                .users(users)
+                .build();
+        pointTotalRepository.save(pointTotal);
+        users.updatePointTotal(pointTotal);
         //장소
         Place place = Place.builder()
                 .placeName("테스트 장소")
@@ -91,7 +103,7 @@ public class PointServiceTests {
         //리뷰 작성
         Review review = Review.builder()
                 .content("리뷰 내용")
-                .user(user)
+                .users(users)
                 .place(place)
                 .reviewType(ReviewType.FIRST)
                 .build();
@@ -102,11 +114,11 @@ public class PointServiceTests {
                 .action("ADD")
                 .reviewId(review.getReviewId())
                 .content(review.getContent())
-                .userId(user.getUserId())
+                .userId(users.getUsersId())
                 .placeId(place.getPlaceId())
                 .build();
         pointService.addReviewPoint(requestDto);
-        List<Point> pointList = pointRepository.findByUser(user);
+        List<Point> pointList = pointRepository.findByUsers(users);
         for(Point point : pointList){
             assertEquals(point.getPoint(), 2);
         }
@@ -115,10 +127,16 @@ public class PointServiceTests {
     @Transactional
     @DisplayName("리뷰 작성 포인트 적립 테스트(텍스트+사진 - 성공)")
     void addPointWhenPhotoAndTextTest(){
-        User user = User.builder()
+        Users users = Users.builder()
                 .nickname("nickname")
                 .build();
-        user = userRepository.save(user);
+        users = usersRepository.save(users);
+        PointTotal pointTotal = PointTotal.builder()
+                .total(0L)
+                .users(users)
+                .build();
+        pointTotalRepository.save(pointTotal);
+        users.updatePointTotal(pointTotal);
         //장소
         Place place = Place.builder()
                 .placeName("테스트 장소")
@@ -127,7 +145,7 @@ public class PointServiceTests {
         //리뷰 작성
         Review review = Review.builder()
                 .content("리뷰 내용")
-                .user(user)
+                .users(users)
                 .place(place)
                 .reviewType(ReviewType.NOT_FIRST)
                 .build();
@@ -142,11 +160,11 @@ public class PointServiceTests {
                 .reviewId(review.getReviewId())
                 .attachedPhotoIds(attachedPhotoIds)
                 .content(review.getContent())
-                .userId(user.getUserId())
+                .userId(users.getUsersId())
                 .placeId(place.getPlaceId())
                 .build();
         pointService.addReviewPoint(requestDto);
-        List<Point> pointList = pointRepository.findByUser(user);
+        List<Point> pointList = pointRepository.findByUsers(users);
         for(Point point : pointList){
             assertEquals(point.getPoint(), 2);
         }
@@ -156,10 +174,16 @@ public class PointServiceTests {
     @Transactional
     @DisplayName("리뷰 작성 포인트 적립 테스트(사진만 - 성공)")
     void addPointWhenOnlyPhotoTest(){
-        User user = User.builder()
+        Users users = Users.builder()
                 .nickname("nickname")
                 .build();
-        user = userRepository.save(user);
+        users = usersRepository.save(users);
+        PointTotal pointTotal = PointTotal.builder()
+                .total(0L)
+                .users(users)
+                .build();
+        pointTotalRepository.save(pointTotal);
+        users.updatePointTotal(pointTotal);
         //장소
         Place place = Place.builder()
                 .placeName("테스트 장소")
@@ -167,7 +191,7 @@ public class PointServiceTests {
         place = placeRepository.save(place);
         //리뷰 작성
         Review review = Review.builder()
-                .user(user)
+                .users(users)
                 .place(place)
                 .reviewType(ReviewType.NOT_FIRST)
                 .build();
@@ -182,11 +206,11 @@ public class PointServiceTests {
                 .reviewId(review.getReviewId())
                 .attachedPhotoIds(attachedPhotoIds)
                 .content(review.getContent())
-                .userId(user.getUserId())
+                .userId(users.getUsersId())
                 .placeId(place.getPlaceId())
                 .build();
         pointService.addReviewPoint(requestDto);
-        List<Point> pointList = pointRepository.findByUser(user);
+        List<Point> pointList = pointRepository.findByUsers(users);
         for(Point point : pointList){
             assertEquals(point.getPoint(), 1);
         }
@@ -196,10 +220,16 @@ public class PointServiceTests {
     @Transactional
     @DisplayName("리뷰 작성 포인트 적립 테스트(첫리뷰+텍스트+사진 - 성공)")
     void addPointWhenPhotoAndTextAndFirstTest(){
-        User user = User.builder()
+        Users users = Users.builder()
                 .nickname("nickname")
                 .build();
-        user = userRepository.save(user);
+        users = usersRepository.save(users);
+        PointTotal pointTotal = PointTotal.builder()
+                .total(0L)
+                .users(users)
+                .build();
+        pointTotalRepository.save(pointTotal);
+        users.updatePointTotal(pointTotal);
         //장소
         Place place = Place.builder()
                 .placeName("테스트 장소")
@@ -208,7 +238,7 @@ public class PointServiceTests {
         //리뷰 작성
         Review review = Review.builder()
                 .content("리뷰 내용")
-                .user(user)
+                .users(users)
                 .place(place)
                 .reviewType(ReviewType.FIRST)
                 .build();
@@ -223,11 +253,11 @@ public class PointServiceTests {
                 .reviewId(review.getReviewId())
                 .attachedPhotoIds(attachedPhotoIds)
                 .content(review.getContent())
-                .userId(user.getUserId())
+                .userId(users.getUsersId())
                 .placeId(place.getPlaceId())
                 .build();
         pointService.addReviewPoint(requestDto);
-        List<Point> pointList = pointRepository.findByUser(user);
+        List<Point> pointList = pointRepository.findByUsers(users);
         for(Point point : pointList){
             assertEquals(point.getPoint(), 3);
         }
@@ -236,16 +266,16 @@ public class PointServiceTests {
     @Transactional
     @DisplayName("리뷰 수정 포인트 적립 테스트(사진 추가 - 성공)")
     void modPointWhenPhotoAndTextAndFirstTest(){
-        User user = User.builder()
+        Users users = Users.builder()
                 .nickname("nickname")
                 .build();
-        user = userRepository.save(user);
+        users = usersRepository.save(users);
         PointTotal pointTotal = PointTotal.builder()
                 .total(0L)
-                .user(user)
+                .users(users)
                 .build();
         pointTotalRepository.save(pointTotal);
-        user.updatePointTotal(pointTotal);
+        users.updatePointTotal(pointTotal);
         //장소
         Place place = Place.builder()
                 .placeName("테스트 장소")
@@ -254,7 +284,7 @@ public class PointServiceTests {
         //리뷰 작성
         Review review = Review.builder()
                 .content("리뷰 내용")
-                .user(user)
+                .users(users)
                 .place(place)
                 .reviewType(ReviewType.NOT_FIRST)
                 .build();
@@ -265,7 +295,7 @@ public class PointServiceTests {
                 .action("ADD")
                 .reviewId(review.getReviewId())
                 .content(review.getContent())
-                .userId(user.getUserId())
+                .userId(users.getUsersId())
                 .placeId(place.getPlaceId())
                 .build();
         pointService.addReviewPoint(requestDto);
@@ -279,15 +309,15 @@ public class PointServiceTests {
                 .reviewId(review.getReviewId())
                 .content(review.getContent())
                 .attachedPhotoIds(attachedPhotoIds)
-                .userId(user.getUserId())
+                .userId(users.getUsersId())
                 .placeId(place.getPlaceId())
                 .build();
         pointService.modReviewPoint(requestDto1);
-        List<Point> pointList = pointRepository.findByUser(user);
+        List<Point> pointList = pointRepository.findByUsers(users);
         for(Point point : pointList){
             assertEquals(point.getPoint(), 2);
         }
-        List<PointHistory> pointHistoryList = pointHistoryRepository.findByUser(user);
+        List<PointHistory> pointHistoryList = pointHistoryRepository.findByUsers(users);
 
         for(PointHistory pointHistory: pointHistoryList){
             System.out.println(pointHistory.getPoint()+" "+pointHistory.getActionType());
@@ -297,10 +327,16 @@ public class PointServiceTests {
     @Transactional
     @DisplayName("리뷰 수정 포인트 적립 테스트(사진 삭제 - 성공)")
     void modPointWhenDeletePhotoTest(){
-        User user = User.builder()
+        Users users = Users.builder()
                 .nickname("nickname")
                 .build();
-        user = userRepository.save(user);
+        users = usersRepository.save(users);
+        PointTotal pointTotal = PointTotal.builder()
+                .total(0L)
+                .users(users)
+                .build();
+        pointTotalRepository.save(pointTotal);
+        users.updatePointTotal(pointTotal);
         //장소
         Place place = Place.builder()
                 .placeName("테스트 장소")
@@ -309,7 +345,7 @@ public class PointServiceTests {
         //리뷰 작성
         Review review = Review.builder()
                 .content("리뷰 내용")
-                .user(user)
+                .users(users)
                 .place(place)
                 .reviewType(ReviewType.NOT_FIRST)
                 .build();
@@ -324,7 +360,7 @@ public class PointServiceTests {
                 .reviewId(review.getReviewId())
                 .attachedPhotoIds(attachedPhotoIds)
                 .content(review.getContent())
-                .userId(user.getUserId())
+                .userId(users.getUsersId())
                 .placeId(place.getPlaceId())
                 .build();
         pointService.addReviewPoint(requestDto);
@@ -335,16 +371,16 @@ public class PointServiceTests {
                 .action("MOD")
                 .reviewId(review.getReviewId())
                 .content(review.getContent())
-                .userId(user.getUserId())
+                .userId(users.getUsersId())
                 .placeId(place.getPlaceId())
                 .build();
         pointService.modReviewPoint(requestDto1);
 
-        List<Point> pointList = pointRepository.findByUser(user);
+        List<Point> pointList = pointRepository.findByUsers(users);
         for(Point point : pointList){
             assertEquals(point.getPoint(), 1);
         }
-        List<PointHistory> pointHistoryList = pointHistoryRepository.findByUser(user);
+        List<PointHistory> pointHistoryList = pointHistoryRepository.findByUsers(users);
 
         for(PointHistory pointHistory: pointHistoryList){
             System.out.println(pointHistory.getPoint()+" "+pointHistory.getActionType());
@@ -354,16 +390,16 @@ public class PointServiceTests {
     @Transactional
     @DisplayName("리뷰 수정 포인트 적립 테스트(텍스트 수정 - 성공)")
     void modPointWhenModifyTextTest(){
-        User user = User.builder()
+        Users users = Users.builder()
                 .nickname("nickname")
                 .build();
-        user = userRepository.save(user);
+        users = usersRepository.save(users);
         PointTotal pointTotal = PointTotal.builder()
                 .total(0L)
-                .user(user)
+                .users(users)
                 .build();
         pointTotalRepository.save(pointTotal);
-        user.updatePointTotal(pointTotal);
+        users.updatePointTotal(pointTotal);
         //장소
         Place place = Place.builder()
                 .placeName("테스트 장소")
@@ -372,7 +408,7 @@ public class PointServiceTests {
         //리뷰 작성
         Review review = Review.builder()
                 .content("리뷰 내용")
-                .user(user)
+                .users(users)
                 .place(place)
                 .reviewType(ReviewType.NOT_FIRST)
                 .build();
@@ -387,7 +423,7 @@ public class PointServiceTests {
                 .reviewId(review.getReviewId())
                 .attachedPhotoIds(attachedPhotoIds)
                 .content(review.getContent())
-                .userId(user.getUserId())
+                .userId(users.getUsersId())
                 .placeId(place.getPlaceId())
                 .build();
         pointService.addReviewPoint(requestDto);
@@ -398,36 +434,36 @@ public class PointServiceTests {
                 .reviewId(review.getReviewId())
                 .content(review.getContent())
                 .attachedPhotoIds(attachedPhotoIds)
-                .userId(user.getUserId())
+                .userId(users.getUsersId())
                 .placeId(place.getPlaceId())
                 .build();
         pointService.modReviewPoint(requestDto1);
 
-        List<Point> pointList = pointRepository.findByUser(user);
+        List<Point> pointList = pointRepository.findByUsers(users);
         for(Point point : pointList){
             assertEquals(2, point.getPoint());
         }
-        List<PointHistory> pointHistoryList = pointHistoryRepository.findByUser(user);
+        List<PointHistory> pointHistoryList = pointHistoryRepository.findByUsers(users);
         assertEquals(1, pointHistoryList.size());
 
-        PointTotal total = pointTotalRepository.findByUser(user);
+        PointTotal total = pointTotalRepository.findByUsers(users);
         assertEquals(2, total.getTotal());
     }
     @Test
     @Transactional
     @DisplayName("리뷰 삭제 포인트 적립 테스트(텍스트만 있는 리뷰- 성공)")
     void deletePointWhenOnyTextTest(){
-        User user = User.builder()
+        Users users = Users.builder()
                 .nickname("nickname")
                 .build();
-        user = userRepository.save(user);
+        users = usersRepository.save(users);
 
         PointTotal pointTotal = PointTotal.builder()
                 .total(0L)
-                .user(user)
+                .users(users)
                 .build();
         pointTotalRepository.save(pointTotal);
-        user.updatePointTotal(pointTotal);
+        users.updatePointTotal(pointTotal);
         //장소
         Place place = Place.builder()
                 .placeName("테스트 장소")
@@ -436,7 +472,7 @@ public class PointServiceTests {
         //리뷰 작성
         Review review = Review.builder()
                 .content("리뷰 내용")
-                .user(user)
+                .users(users)
                 .place(place)
                 .reviewType(ReviewType.NOT_FIRST)
                 .build();
@@ -451,7 +487,7 @@ public class PointServiceTests {
                 .reviewId(review.getReviewId())
                 .attachedPhotoIds(attachedPhotoIds)
                 .content(review.getContent())
-                .userId(user.getUserId())
+                .userId(users.getUsersId())
                 .placeId(place.getPlaceId())
                 .build();
         pointService.addReviewPoint(requestDto);
@@ -464,20 +500,20 @@ public class PointServiceTests {
                 .reviewId(review.getReviewId())
                 .content(review.getContent())
                 .attachedPhotoIds(attachedPhotoIds)
-                .userId(user.getUserId())
+                .userId(users.getUsersId())
                 .placeId(place.getPlaceId())
                 .build();
         pointService.deleteReviewPoint(requestDto1);
 
-        List<Point> pointList = pointRepository.findByUser(user);
+        List<Point> pointList = pointRepository.findByUsers(users);
         assertEquals(0,pointList.size());
-        List<PointHistory> pointHistoryList = pointHistoryRepository.findByUser(user);
+        List<PointHistory> pointHistoryList = pointHistoryRepository.findByUsers(users);
 
         for(PointHistory pointHistory: pointHistoryList){
             System.out.println(pointHistory.getPoint()+" "+pointHistory.getActionType());
         }
         assertEquals(2, pointHistoryList.size());
-        PointTotal total = pointTotalRepository.findByUser(user);
+        PointTotal total = pointTotalRepository.findByUsers(users);
         assertEquals(0, total.getTotal());
     }
 
@@ -485,17 +521,17 @@ public class PointServiceTests {
     @Transactional
     @DisplayName("리뷰 삭제 포인트 적립 테스트(성공)")
     void getPointHistoryTest(){
-        User user = User.builder()
+        Users users = Users.builder()
                 .nickname("nickname")
                 .build();
-        user = userRepository.save(user);
+        users = usersRepository.save(users);
 
         PointTotal pointTotal = PointTotal.builder()
                 .total(0L)
-                .user(user)
+                .users(users)
                 .build();
         pointTotalRepository.save(pointTotal);
-        user.updatePointTotal(pointTotal);
+        users.updatePointTotal(pointTotal);
         //장소
         Place place = Place.builder()
                 .placeName("테스트 장소")
@@ -504,7 +540,7 @@ public class PointServiceTests {
         //리뷰 작성
         Review review = Review.builder()
                 .content("리뷰 내용")
-                .user(user)
+                .users(users)
                 .place(place)
                 .reviewType(ReviewType.NOT_FIRST)
                 .build();
@@ -519,7 +555,7 @@ public class PointServiceTests {
                 .reviewId(review.getReviewId())
                 .attachedPhotoIds(attachedPhotoIds)
                 .content(review.getContent())
-                .userId(user.getUserId())
+                .userId(users.getUsersId())
                 .placeId(place.getPlaceId())
                 .build();
         pointService.addReviewPoint(requestDto);
@@ -529,7 +565,7 @@ public class PointServiceTests {
                 .action("MOD")
                 .reviewId(review.getReviewId())
                 .content(review.getContent())
-                .userId(user.getUserId())
+                .userId(users.getUsersId())
                 .placeId(place.getPlaceId())
                 .build();
         pointService.modReviewPoint(requestDto1);
@@ -542,7 +578,7 @@ public class PointServiceTests {
                 .reviewId(review.getReviewId())
                 .content(review.getContent())
                 .attachedPhotoIds(attachedPhotoIds)
-                .userId(user.getUserId())
+                .userId(users.getUsersId())
                 .placeId(place.getPlaceId())
                 .build();
         pointService.deleteReviewPoint(requestDto2);

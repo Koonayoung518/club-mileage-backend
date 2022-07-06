@@ -28,7 +28,7 @@ public class Review {
     @Column(name = "content")
     private String content;
 
-    @OneToMany(mappedBy = "review")
+    @OneToMany(mappedBy = "review", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Photo> photoList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -36,17 +36,17 @@ public class Review {
     private Place place;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "users_id")
+    private Users users;
 
     @Column(name = "review_type")
     @Enumerated(value = EnumType.STRING)
     private ReviewType reviewType;
 
     @Builder
-    public Review(String content, Place place , User user, ReviewType reviewType){
+    public Review(String content, Place place , Users users, ReviewType reviewType){
         this.content = content;
-        this.user = user;
+        this.users = users;
         this.place = place;
         this.reviewType = reviewType;
     }

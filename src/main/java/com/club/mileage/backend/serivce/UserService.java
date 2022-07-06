@@ -1,9 +1,9 @@
 package com.club.mileage.backend.serivce;
 
 import com.club.mileage.backend.entity.PointTotal;
-import com.club.mileage.backend.entity.User;
+import com.club.mileage.backend.entity.Users;
 import com.club.mileage.backend.repository.PointTotalRepository;
-import com.club.mileage.backend.repository.UserRepository;
+import com.club.mileage.backend.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,23 +11,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UserRepository userRepository;
+    private final UsersRepository usersRepository;
     private final PointTotalRepository pointTotalRepository;
 
     @Transactional
-    public User mockUser(){
+    public Users mockUser(){
         //임의의 유저
-        User user = User.builder()
+        Users users = Users.builder()
                 .nickname("유저")
                 .build();
-        user = userRepository.save(user);
+        users = usersRepository.save(users);
 
         PointTotal pointTotal = PointTotal.builder()
                 .total(0L)
-                .user(user)
+                .users(users)
                 .build();
         pointTotalRepository.save(pointTotal);
-        user.updatePointTotal(pointTotal);
-        return user;
+        users.updatePointTotal(pointTotal);
+        return users;
     }
 }

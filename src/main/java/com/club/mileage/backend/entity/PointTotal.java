@@ -19,13 +19,13 @@ public class PointTotal {
     private Long total = 0L;
 
     @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "users_id")
+    private Users users;
 
     @Builder
-    public PointTotal(Long total, User user){
+    public PointTotal(Long total, Users users){
         this.total  = total;
-        this.user =  user;
+        this.users = users;
     }
 
     public void updatePointTotal(Long total){

@@ -38,15 +38,15 @@ public class PointHistory {
     private String targetId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "users_id")
+    private Users users;
 
     @Builder
-    public PointHistory(EventType eventType, ActionType actionType, Long point, String targetId, User user){
+    public PointHistory(EventType eventType, ActionType actionType, Long point, String targetId, Users users){
         this.eventType = eventType;
         this.actionType = actionType;
         this.point = point;
         this.targetId = targetId;
-        this.user = user;
+        this.users = users;
     }
 }

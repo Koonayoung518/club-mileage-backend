@@ -11,7 +11,12 @@ import java.util.Date;
 
 @Entity
 @Getter
-@Table(name = "point")
+@Table(name = "point"
+        , indexes = {
+        @Index(name = "idx_point_users", columnList = "users_id"),
+        @Index(name = "idx_point_users_target_id",columnList = "users_id, target_id")
+}
+)
 @NoArgsConstructor
 public class Point {
     @Id
@@ -33,15 +38,15 @@ public class Point {
     private String targetId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "users_id")
+    private Users users;
 
     @Builder
-    public Point (EventType eventType, Long point, String targetId, User user){
+    public Point (EventType eventType, Long point, String targetId, Users users){
         this.eventType = eventType;
         this.point = point;
         this.targetId = targetId;
-        this.user = user;
+        this.users = users;
     }
     public void updatePoint(Long point){
         this.point = point;

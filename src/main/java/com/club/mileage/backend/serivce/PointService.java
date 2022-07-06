@@ -24,7 +24,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class PointService {
-    private final UserRepository userRepository;
+    private final UsersRepository usersRepository;
     private final ReviewRepository reviewRepository;
     private final PointRepository pointRepository;
     private final PointHistoryRepository pointHistoryRepository;
@@ -32,7 +32,7 @@ public class PointService {
 
     @Transactional
     public void addReviewPoint(RequestPoint.register requestDto){
-        User user = userRepository.findById(requestDto.getUserId()).orElseThrow(()-> new NotFoundUserException());
+        Users users = usersRepository.findById(requestDto.getUserId()).orElseThrow(()-> new NotFoundUserException());
 
         Review review = reviewRepository.findById(requestDto.getReviewId()).orElseThrow(()-> new NotFoundReviewException());
 
@@ -44,7 +44,7 @@ public class PointService {
         if(review.getReviewType().equals(ReviewType.FIRST))// 특정 장소에 첫 리뷰 작성 시 1점
             mileage++;
 
-        Point point = pointRepository.findByUserAndTargetId(user, requestDto.getReviewId());
+        Point point = pointRepository.findByUsersAndTargetId(users, requestDto.getReviewId());
         if(point != null){//이미 적립한 포인트가 있을 경우
             throw new DuplicatedPointException();
         }
@@ -53,17 +53,17 @@ public class PointService {
                     .eventType(EventType.REVIEW)
                     .point(mileage)
                     .targetId(review.getReviewId())
-                    .user(user)
+                    .users(users)
                     .build();
             pointRepository.save(point);
 
         //포인트 업데이트
-        updatePoint(requestDto.getType(),requestDto.getAction(), mileage, requestDto.getReviewId(), user);
+        updatePoint(requestDto.getType(),requestDto.getAction(), mileage, requestDto.getReviewId(), users);
     }
 
     @Transactional
     public void modReviewPoint(RequestPoint.register requestDto){
-        User user = userRepository.findById(requestDto.getUserId()).orElseThrow(()-> new NotFoundUserException());
+        Users users = usersRepository.findById(requestDto.getUserId()).orElseThrow(()-> new NotFoundUserException());
 
         Review review = reviewRepository.findById(requestDto.getReviewId()).orElseThrow(()-> new NotFoundReviewException());
 
@@ -75,7 +75,7 @@ public class PointService {
         if(review.getReviewType().equals(ReviewType.FIRST))// 특정 장소에 첫 리뷰 작성 시 1점
             mileage++;
 
-        Point point = pointRepository.findByUserAndTargetId(user, requestDto.getReviewId());
+        Point point = pointRepository.findByUsersAndTargetId(users, requestDto.getReviewId());
         if(point == null){//포인트가 없을 경우
             throw new FailedUpdatePointException();
         }
@@ -86,14 +86,14 @@ public class PointService {
             return;
 
         //포인트 업데이트
-        updatePoint(requestDto.getType(),requestDto.getAction(), mileage - existPoint, requestDto.getReviewId(), user);
+        updatePoint(requestDto.getType(),requestDto.getAction(), mileage - existPoint, requestDto.getReviewId(), users);
     }
 
     @Transactional
     public void deleteReviewPoint(RequestPoint.register requestDto){
-        User user = userRepository.findById(requestDto.getUserId()).orElseThrow(()-> new NotFoundUserException());
+        Users users = usersRepository.findById(requestDto.getUserId()).orElseThrow(()-> new NotFoundUserException());
 
-        Point point = pointRepository.findByUserAndTargetId(user, requestDto.getReviewId());
+        Point point = pointRepository.findByUsersAndTargetId(users, requestDto.getReviewId());
         if(point == null){//포인트가 없을 경우
             throw new FailedUpdatePointException();
         }
@@ -102,17 +102,17 @@ public class PointService {
         //포인트 삭제
         pointRepository.delete(point);
         //포인트 업데이트
-        updatePoint(requestDto.getType(),requestDto.getAction(), mileage, requestDto.getReviewId(), user);
+        updatePoint(requestDto.getType(),requestDto.getAction(), mileage, requestDto.getReviewId(), users);
 
     }
     @Transactional
     public ResponsePoint.getPointHistory getPointHistory(String userId){
-        User user = userRepository.findById(userId).orElseThrow(()-> new NotFoundUserException());
+        Users users = usersRepository.findById(userId).orElseThrow(()-> new NotFoundUserException());
 
-        PointTotal pointTotal = pointTotalRepository.findByUser(user);
+        PointTotal pointTotal = pointTotalRepository.findByUsers(users);
 
         List<History> historyList = new ArrayList<>();
-        List<PointHistory> pointHistoryList = pointHistoryRepository.findByUser(user);
+        List<PointHistory> pointHistoryList = pointHistoryRepository.findByUsers(users);
         for(PointHistory item : pointHistoryList){
             History history = History.builder()
                     .createdAt(item.getCreatedAt())
@@ -132,24 +132,27 @@ public class PointService {
 
     @Transactional
     private void updatePoint(String eventType, String actionType,
-                             Long mileage, String targetId, User user){
+                             Long mileage, String targetId, Users users){
         //포인트 히스토리에 등록
         PointHistory history = PointHistory.builder()
                 .eventType(EventType.valueOf(eventType))
                 .actionType(ActionType.valueOf(actionType))
                 .point(mileage)
                 .targetId(targetId)
-                .user(user)
+                .users(users)
                 .build();
         pointHistoryRepository.save(history);
 
         //포인트 총합 업데이트
-        List<Point> point = pointRepository.findByUser(user);
+        List<Point> point = pointRepository.findByUsers(users);
         Long total =0L;
         if(!point.isEmpty()){ //포인트가 있을 경우
-          total  = pointRepository.findByTotal(user);
+          total  = pointRepository.findByTotal(users);
         }
-        PointTotal pointTotal = pointTotalRepository.findByUser(user);
+        PointTotal pointTotal = pointTotalRepository.findByUsers(users);
+        if(pointTotal == null){
+            throw new FailedUpdatePointException();
+        }
         pointTotal.updatePointTotal(total);
     }
 }
