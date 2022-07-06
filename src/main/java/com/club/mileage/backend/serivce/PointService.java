@@ -1,5 +1,6 @@
 package com.club.mileage.backend.serivce;
 
+import com.club.mileage.backend.core.serviceInterface.PointServiceInterface;
 import com.club.mileage.backend.core.type.ActionType;
 import com.club.mileage.backend.core.type.EventType;
 import com.club.mileage.backend.core.type.ReviewType;
@@ -23,13 +24,13 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class PointService {
+public class PointService implements PointServiceInterface {
     private final UsersRepository usersRepository;
     private final ReviewRepository reviewRepository;
     private final PointRepository pointRepository;
     private final PointHistoryRepository pointHistoryRepository;
     private final PointTotalRepository pointTotalRepository;
-
+    @Override
     @Transactional
     public void addReviewPoint(RequestPoint.register requestDto){
         Users users = usersRepository.findById(requestDto.getUserId()).orElseThrow(()-> new NotFoundUserException());
@@ -61,6 +62,7 @@ public class PointService {
         updatePoint(requestDto.getType(),requestDto.getAction(), mileage, requestDto.getReviewId(), users);
     }
 
+    @Override
     @Transactional
     public void modReviewPoint(RequestPoint.register requestDto){
         Users users = usersRepository.findById(requestDto.getUserId()).orElseThrow(()-> new NotFoundUserException());
@@ -89,6 +91,7 @@ public class PointService {
         updatePoint(requestDto.getType(),requestDto.getAction(), mileage - existPoint, requestDto.getReviewId(), users);
     }
 
+    @Override
     @Transactional
     public void deleteReviewPoint(RequestPoint.register requestDto){
         Users users = usersRepository.findById(requestDto.getUserId()).orElseThrow(()-> new NotFoundUserException());

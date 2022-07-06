@@ -11,8 +11,7 @@ import java.util.Date;
 
 @Entity
 @Getter
-@Table(name = "point"
-        , indexes = {
+@Table(name = "point", indexes = {
         @Index(name = "idx_point_users", columnList = "users_id"),
         @Index(name = "idx_point_users_target_id",columnList = "users_id, target_id")
 }

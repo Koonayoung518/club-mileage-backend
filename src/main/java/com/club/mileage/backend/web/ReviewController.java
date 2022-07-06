@@ -34,6 +34,18 @@ public class ReviewController {
                 .message("리뷰 등록 성공")
                 .build(), HttpStatus.OK);
     }
+
+    @PostMapping("/review/{reviewId}")
+    public ResponseEntity<ResponseMessage> updateReview(@RequestPart(name = "file")List<MultipartFile> fileList,
+                                                          @RequestPart(name = "requestDto")RequestReview.update requestDto){
+        reviewService.updateReview(fileList,requestDto);
+
+        return new ResponseEntity<>(ResponseMessage.builder()
+                .status(HttpStatus.OK.value())
+                .message("리뷰 등록 성공")
+                .build(), HttpStatus.OK);
+    }
+
     @DeleteMapping("/review/{userId}/{reviewId}")
     public ResponseEntity<ResponseMessage> getMyReview(@PathVariable String userId, @PathVariable String reviewId){
         reviewService.deleteReview(userId, reviewId);

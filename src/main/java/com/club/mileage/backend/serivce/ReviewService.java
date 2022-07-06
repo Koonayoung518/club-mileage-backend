@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -77,10 +78,52 @@ public class ReviewService implements ReviewServiceInterface {
                 photo = photoRepository.save(photo);
                 review.addPhoto(photo);
             }
-
-
         }
     }
+
+    @Override
+    @Transactional
+    public void updateReview(List<MultipartFile> fileList, RequestReview.update requestDto){
+        Users users = usersRepository.findById(requestDto.getUserId()).orElseThrow(()-> new NotFoundUserException());
+
+        Place place = placeRepository.findById(requestDto.getPlaceId()).orElseThrow(()->new NotFoundPlaceException());
+
+        Review review = reviewRepository.findByUsersAndPlace(users, place);
+        if(review == null){
+            throw new NotFoundReviewException();
+        }
+        //내용업데이트
+        review.updateReview(Optional.ofNullable(requestDto.getContent()).orElse(null));
+
+        //기존 리뷰에 사진이 있으면 s3에 저장된 사진 파일 삭제
+        List<Photo> photoList = photoRepository.findByReview(review);
+        if(!photoList.isEmpty()){
+            for(Photo photo : photoList){
+                s3Service.deleteFile(photo.getUrl());
+
+                review.getPhotoList().remove(photo);
+                photoRepository.delete(photo);
+            }
+        }
+        if(!fileList.isEmpty()){//수정한 리뷰에 사진이 있을 경우
+            for(MultipartFile file : fileList){
+                String url = null;
+                try{
+                    url = s3Service.upload(file, "review");
+                }catch (IOException e){
+                    System.out.println("S3 등록 실패");
+                }
+                Photo photo = Photo.builder()
+                        .url(url)
+                        .review(review)
+                        .build();
+                photo = photoRepository.save(photo);
+                review.addPhoto(photo);
+            }
+        }
+
+    }
+
     @Transactional
     @Override
     public void deleteReview(String userId, String reviewId){

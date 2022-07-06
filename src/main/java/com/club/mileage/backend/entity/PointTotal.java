@@ -8,7 +8,9 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@Table(name = "point_total")
+@Table(name = "point_total", indexes = {
+        @Index(name = "idx_point_total_users", columnList = "users_id")
+})
 @NoArgsConstructor
 public class PointTotal {
     @Id

@@ -14,7 +14,10 @@ import java.util.UUID;
 
 @Entity
 @Getter
-@Table(name = "review")
+@Table(name = "review", indexes = {
+        @Index(name = "idx_review_users_place", columnList = "users_id, place_id"),
+        @Index(name = "idx_review_users_review_id", columnList = "users_id, review_id")
+})
 @NoArgsConstructor
 public class Review {
     @Id
@@ -53,5 +56,8 @@ public class Review {
 
     public void addPhoto(Photo photo){
         this.photoList.add(photo);
+    }
+    public void updateReview(String content){
+        this.content = content;
     }
 }

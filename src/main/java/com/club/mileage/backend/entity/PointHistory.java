@@ -12,7 +12,9 @@ import java.util.Date;
 
 @Entity
 @Getter
-@Table(name = "point_history")
+@Table(name = "point_history", indexes = {
+        @Index(name = "idx_point_history_users", columnList = "users_id")
+})
 @NoArgsConstructor
 public class PointHistory {
     @Id

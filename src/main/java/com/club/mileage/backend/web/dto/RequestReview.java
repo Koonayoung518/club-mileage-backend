@@ -12,4 +12,11 @@ public class RequestReview {
         private String content;
         private String placeId;
     }
+    @Builder
+    @Data
+    public static class update{
+        private String userId;
+        private String content;
+        private String placeId;
+    }
 }

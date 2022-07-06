@@ -56,4 +56,5 @@ public class PointController {
                 .list(response)
                 .build(), HttpStatus.OK);
     }
+
     }
