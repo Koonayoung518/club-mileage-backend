@@ -108,6 +108,7 @@ public class PointService implements PointServiceInterface {
         updatePoint(requestDto.getType(),requestDto.getAction(), mileage, requestDto.getReviewId(), users);
 
     }
+    @Override
     @Transactional
     public ResponsePoint.getPointHistory getPointHistory(String userId){
         Users users = usersRepository.findById(userId).orElseThrow(()-> new NotFoundUserException());
@@ -131,6 +132,16 @@ public class PointService implements PointServiceInterface {
                 .historyList(historyList)
                 .build();
         return response;
+    }
+
+    @Override
+    @Transactional
+    public Long getPointTotal(String userId){
+        Users users = usersRepository.findById(userId).orElseThrow(()-> new NotFoundUserException());
+
+        PointTotal pointTotal = pointTotalRepository.findByUsers(users);
+
+        return pointTotal.getTotal();
     }
 
     @Transactional

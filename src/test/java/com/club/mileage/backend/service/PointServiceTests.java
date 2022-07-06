@@ -519,7 +519,7 @@ public class PointServiceTests {
 
     @Test
     @Transactional
-    @DisplayName("리뷰 삭제 포인트 적립 테스트(성공)")
+    @DisplayName("포인트 내역 조회 테스트(성공)")
     void getPointHistoryTest(){
         Users users = Users.builder()
                 .nickname("nickname")
@@ -586,6 +586,86 @@ public class PointServiceTests {
         ResponsePoint.getPointHistory response = pointService.getPointHistory(requestDto.getUserId());
 
         System.out.println(response);
+
+
     }
 
+    @Test
+    @Transactional
+    @DisplayName("포인트 총합 조회 테스트(성공)")
+    void getPointTotalTest(){
+        Users users = Users.builder()
+                .nickname("nickname")
+                .build();
+        users = usersRepository.save(users);
+
+        PointTotal pointTotal = PointTotal.builder()
+                .total(0L)
+                .users(users)
+                .build();
+        pointTotalRepository.save(pointTotal);
+        users.updatePointTotal(pointTotal);
+        //장소
+        Place place = Place.builder()
+                .placeName("테스트 장소")
+                .build();
+        place = placeRepository.save(place);
+        //리뷰 작성
+        Review review = Review.builder()
+                .content("리뷰 내용")
+                .users(users)
+                .place(place)
+                .reviewType(ReviewType.NOT_FIRST)
+                .build();
+        review = reviewRepository.save(review);
+        //사진
+        List<String > attachedPhotoIds = new ArrayList<>();
+        attachedPhotoIds.add("photoId");
+        //포인트 적립
+        RequestPoint.register requestDto = RequestPoint.register.builder()
+                .type("REVIEW")
+                .action("ADD")
+                .reviewId(review.getReviewId())
+                .attachedPhotoIds(attachedPhotoIds)
+                .content(review.getContent())
+                .userId(users.getUsersId())
+                .placeId(place.getPlaceId())
+                .build();
+        pointService.addReviewPoint(requestDto);
+        //리뷰 수정
+        RequestPoint.register requestDto1 = RequestPoint.register.builder()
+                .type("REVIEW")
+                .action("MOD")
+                .reviewId(review.getReviewId())
+                .content(review.getContent())
+                .userId(users.getUsersId())
+                .placeId(place.getPlaceId())
+                .build();
+        pointService.modReviewPoint(requestDto1);
+
+        Long total = pointService.getPointTotal(users.getUsersId());
+
+        assertEquals(1, total);
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("포인트 총합 조회 테스트(포인트 0일 때 -성공)")
+    void getPointTotalWhenNotExistPointTest(){
+        Users users = Users.builder()
+                .nickname("nickname")
+                .build();
+        users = usersRepository.save(users);
+
+        PointTotal pointTotal = PointTotal.builder()
+                .total(0L)
+                .users(users)
+                .build();
+        pointTotalRepository.save(pointTotal);
+        users.updatePointTotal(pointTotal);
+
+        Long total = pointService.getPointTotal(users.getUsersId());
+
+        assertEquals(0, total);
+    }
 }

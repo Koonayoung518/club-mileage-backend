@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -57,4 +58,16 @@ public class PointController {
                 .build(), HttpStatus.OK);
     }
 
+    @GetMapping("/point/total")
+    public ResponseEntity<ResponseMessage> getPointTotal(@RequestBody Map<String, String> userId){
+
+        Long response = pointService.getPointTotal(userId.get("userId"));
+        Map<String, Long> map = new HashMap<>();
+        map.put("pointTotal", response);
+        return new ResponseEntity<>(ResponseMessage.builder()
+                .status(HttpStatus.OK.value())
+                .message("포인트 총합 조회 성공")
+                .list(map)
+                .build(), HttpStatus.OK);
+    }
     }

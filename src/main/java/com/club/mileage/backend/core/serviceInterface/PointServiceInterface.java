@@ -8,4 +8,5 @@ public interface PointServiceInterface {
     void modReviewPoint(RequestPoint.register requestDto);
     void deleteReviewPoint(RequestPoint.register requestDto);
     ResponsePoint.getPointHistory getPointHistory(String userId);
+    Long getPointTotal(String userId);
 }
