@@ -167,7 +167,6 @@ public class ReviewServiceTests {
         reviewService.registerReview(fileList, requestDto);
 
         //리뷰 수정
-        List<MultipartFile> fileList1 = new ArrayList<>();
         RequestReview.update requestDto1 = RequestReview.update.builder()
                 .placeId(place.getPlaceId())
                 .userId(users.getUsersId())

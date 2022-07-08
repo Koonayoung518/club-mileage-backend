@@ -6,7 +6,12 @@ import lombok.Data;
 import java.util.List;
 
 public class ResponsePoint {
-
+    @Builder
+    @Data
+    public static class updatePoint{
+        private String action;
+        private Long point;
+    }
     @Builder
     @Data
     public static class getPointHistory{

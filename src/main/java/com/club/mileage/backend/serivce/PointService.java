@@ -32,7 +32,7 @@ public class PointService implements PointServiceInterface {
     private final PointTotalRepository pointTotalRepository;
     @Override
     @Transactional
-    public void addReviewPoint(RequestPoint.register requestDto){
+    public ResponsePoint.updatePoint addReviewPoint(RequestPoint.register requestDto){
         Users users = usersRepository.findById(requestDto.getUserId()).orElseThrow(()-> new NotFoundUserException());
 
         Review review = reviewRepository.findById(requestDto.getReviewId()).orElseThrow(()-> new NotFoundReviewException());
@@ -60,11 +60,18 @@ public class PointService implements PointServiceInterface {
 
         //포인트 업데이트
         updatePoint(requestDto.getType(),requestDto.getAction(), mileage, requestDto.getReviewId(), users);
+
+        ResponsePoint.updatePoint response = ResponsePoint.updatePoint.builder()
+                .action(requestDto.getAction())
+                .point(mileage)
+                .build();
+        System.out.println("포인트 적립!");
+        return response;
     }
 
     @Override
     @Transactional
-    public void modReviewPoint(RequestPoint.register requestDto){
+    public ResponsePoint.updatePoint modReviewPoint(RequestPoint.register requestDto){
         Users users = usersRepository.findById(requestDto.getUserId()).orElseThrow(()-> new NotFoundUserException());
 
         Review review = reviewRepository.findById(requestDto.getReviewId()).orElseThrow(()-> new NotFoundReviewException());
@@ -85,15 +92,21 @@ public class PointService implements PointServiceInterface {
         point.updatePoint(mileage);
 
         if(mileage - existPoint == 0) //포인트 업데이트 안해도 됨
-            return;
+            return null;
 
         //포인트 업데이트
         updatePoint(requestDto.getType(),requestDto.getAction(), mileage - existPoint, requestDto.getReviewId(), users);
+
+        ResponsePoint.updatePoint response = ResponsePoint.updatePoint.builder()
+                .action(requestDto.getAction())
+                .point(mileage - existPoint)
+                .build();
+        return response;
     }
 
     @Override
     @Transactional
-    public void deleteReviewPoint(RequestPoint.register requestDto){
+    public ResponsePoint.updatePoint deleteReviewPoint(RequestPoint.register requestDto){
         Users users = usersRepository.findById(requestDto.getUserId()).orElseThrow(()-> new NotFoundUserException());
 
         Point point = pointRepository.findByUsersAndTargetId(users, requestDto.getReviewId());
@@ -107,6 +120,11 @@ public class PointService implements PointServiceInterface {
         //포인트 업데이트
         updatePoint(requestDto.getType(),requestDto.getAction(), mileage, requestDto.getReviewId(), users);
 
+        ResponsePoint.updatePoint response = ResponsePoint.updatePoint.builder()
+                .action(requestDto.getAction())
+                .point(mileage)
+                .build();
+        return response;
     }
     @Override
     @Transactional

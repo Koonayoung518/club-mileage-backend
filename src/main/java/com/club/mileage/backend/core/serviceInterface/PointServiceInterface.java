@@ -4,9 +4,9 @@ import com.club.mileage.backend.web.dto.RequestPoint;
 import com.club.mileage.backend.web.dto.ResponsePoint;
 
 public interface PointServiceInterface {
-    void addReviewPoint(RequestPoint.register requestDto);
-    void modReviewPoint(RequestPoint.register requestDto);
-    void deleteReviewPoint(RequestPoint.register requestDto);
+    ResponsePoint.updatePoint addReviewPoint(RequestPoint.register requestDto);
+    ResponsePoint.updatePoint modReviewPoint(RequestPoint.register requestDto);
+    ResponsePoint.updatePoint deleteReviewPoint(RequestPoint.register requestDto);
     ResponsePoint.getPointHistory getPointHistory(String userId);
     Long getPointTotal(String userId);
 }

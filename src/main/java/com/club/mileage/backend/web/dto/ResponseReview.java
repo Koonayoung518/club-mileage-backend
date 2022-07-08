@@ -7,6 +7,7 @@ public class ResponseReview {
     @Builder
     @Data
     public static class getMyReview{
-
+        private String reviewId;
+        private String content;
     }
 }

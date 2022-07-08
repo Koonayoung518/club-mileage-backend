@@ -7,6 +7,7 @@ import com.club.mileage.backend.serivce.ReviewService;
 import com.club.mileage.backend.serivce.UserService;
 import com.club.mileage.backend.web.dto.RequestReview;
 import com.club.mileage.backend.web.dto.ResponseMessage;
+import com.club.mileage.backend.web.dto.ResponseReview;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +28,12 @@ public class ReviewController {
     @PostMapping("/review")
     public ResponseEntity<ResponseMessage> registerReview(@RequestPart(name = "file")List<MultipartFile> fileList,
                                                           @RequestPart(name = "requestDto")RequestReview.register requestDto){
-        reviewService.registerReview(fileList,requestDto);
+         reviewService.registerReview(fileList,requestDto);
 
         return new ResponseEntity<>(ResponseMessage.builder()
                 .status(HttpStatus.OK.value())
                 .message("리뷰 등록 성공")
+
                 .build(), HttpStatus.OK);
     }
 
@@ -42,12 +44,23 @@ public class ReviewController {
 
         return new ResponseEntity<>(ResponseMessage.builder()
                 .status(HttpStatus.OK.value())
-                .message("리뷰 등록 성공")
+                .message("리뷰 수정 성공")
+                .build(), HttpStatus.OK);
+    }
+
+    @GetMapping("/review")
+    public ResponseEntity<ResponseMessage> getMyReview(@RequestParam String userId){
+        List<ResponseReview.getMyReview> response = reviewService.getMyReview(userId);
+
+        return new ResponseEntity<>(ResponseMessage.builder()
+                .status(HttpStatus.OK.value())
+                .message("내가 작성한 리뷰 조회 성공")
+                .list(response)
                 .build(), HttpStatus.OK);
     }
 
     @DeleteMapping("/review/{userId}/{reviewId}")
-    public ResponseEntity<ResponseMessage> getMyReview(@PathVariable String userId, @PathVariable String reviewId){
+    public ResponseEntity<ResponseMessage> deleteReview(@PathVariable String userId, @PathVariable String reviewId){
         reviewService.deleteReview(userId, reviewId);
 
         return new ResponseEntity<>(ResponseMessage.builder()

@@ -1,6 +1,8 @@
 package com.club.mileage.backend.serivce;
 
 import com.club.mileage.backend.core.serviceInterface.ReviewServiceInterface;
+import com.club.mileage.backend.core.type.ActionType;
+import com.club.mileage.backend.core.type.EventType;
 import com.club.mileage.backend.core.type.ReviewType;
 import com.club.mileage.backend.entity.Photo;
 import com.club.mileage.backend.entity.Place;
@@ -15,14 +17,18 @@ import com.club.mileage.backend.repository.PlaceRepository;
 import com.club.mileage.backend.repository.ReviewRepository;
 import com.club.mileage.backend.repository.UsersRepository;
 import com.club.mileage.backend.web.dto.RequestReview;
+import com.club.mileage.backend.web.dto.ResponseMessage;
+import com.club.mileage.backend.web.dto.ResponseReview;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +38,7 @@ public class ReviewService implements ReviewServiceInterface {
     private final PlaceRepository placeRepository;
     private final PhotoRepository photoRepository;
     private final S3Service s3Service;
+    private final WebClient pointWebClient;
     @Override
     @Transactional
     public void registerReview(List<MultipartFile> fileList, RequestReview.register requestDto){
@@ -121,6 +128,7 @@ public class ReviewService implements ReviewServiceInterface {
                 review.addPhoto(photo);
             }
         }
+
     }
 
     @Transactional
@@ -144,6 +152,26 @@ public class ReviewService implements ReviewServiceInterface {
         users.getReviewList().remove(review);
 
         reviewRepository.delete(review);
-
     }
+
+    @Transactional
+    @Override
+    public List<ResponseReview.getMyReview> getMyReview(String userId){
+        Users users = usersRepository.findById(userId).orElseThrow(()-> new NotFoundUserException());
+
+        List<ResponseReview.getMyReview> list = new ArrayList<>();
+        List<Review> reviewList = reviewRepository.findByUsers(users);
+
+        for(Review review : reviewList){
+            ResponseReview.getMyReview dto = ResponseReview.getMyReview.builder()
+                    .reviewId(review.getReviewId())
+                    .content(review.getContent())
+                    .build();
+            list.add(dto);
+        }
+
+        return list;
+    }
+
+
 }
