@@ -63,9 +63,18 @@ POST /events
 	
 리뷰 삭제 시
 
-![image](https://user-images.githubusercontent.com/78741410/178100962-31346e5c-2767-4db6-b891-064c9956bf57.png)
-
-
+``` json
+{
+    "id": "e8f676ba-439f-49d8-bc66-aeced83a1301",
+    "dateTime": "2022-07-09T10:38:48.861+00:00",
+    "status": 200,
+    "message": "포인트 적립 성공",
+    "list": {
+        "action": "DELETE",
+        "point": -3
+    }
+}
+```
 
 </div>
 </details>
@@ -84,33 +93,33 @@ GET /events
 
 ``` json
 {
-    "id": "ac5f36b5-58e9-4f12-9f74-062830432cc1",
-    "dateTime": "2022-07-09T09:36:17.605+00:00",
+    "id": "0a9d9ae6-4956-4135-bc3b-94f20f909a91",
+    "dateTime": "2022-07-09T10:39:47.329+00:00",
     "status": 200,
     "message": "포인트 조회 성공",
     "list": {
-        "pointTotal": 2,
+        "pointTotal": 0,
         "historyList": [
             {
-                "createdAt": "2022-07-09T09:29:59.631+00:00",
-                "targetId": "66162bcb-f4ca-4588-b7d6-c8f1412da1e4",
+                "createdAt": "2022-07-09T10:29:12.320+00:00",
+                "targetId": "30e908a7-0f1a-438c-8723-8f03fe7356e0",
                 "eventType": "REVIEW",
                 "actionType": "ADD",
                 "point": 2
             },
             {
-                "createdAt": "2022-07-09T09:31:02.946+00:00",
-                "targetId": "66162bcb-f4ca-4588-b7d6-c8f1412da1e4",
+                "createdAt": "2022-07-09T10:32:04.681+00:00",
+                "targetId": "30e908a7-0f1a-438c-8723-8f03fe7356e0",
                 "eventType": "REVIEW",
                 "actionType": "MOD",
                 "point": 1
             },
             {
-                "createdAt": "2022-07-09T09:34:19.378+00:00",
-                "targetId": "66162bcb-f4ca-4588-b7d6-c8f1412da1e4",
+                "createdAt": "2022-07-09T10:38:48.850+00:00",
+                "targetId": "30e908a7-0f1a-438c-8723-8f03fe7356e0",
                 "eventType": "REVIEW",
-                "actionType": "MOD",
-                "point": -1
+                "actionType": "DELETE",
+                "point": -3
             }
         ]
     }
@@ -121,7 +130,7 @@ GET /events
 </details>
 
 <details>
-<summary>포인트 총합 API</summary>
+<summary>포인트 총합 조회 API</summary>
 <div markdown="1">    
 
 ``` json
@@ -130,8 +139,17 @@ GET /point/total
    "userId": String
 }
 ```
-![image](https://user-images.githubusercontent.com/78741410/178099448-52496fa3-8bad-47c0-8d63-a6d998679370.png)
-
+``` json
+{
+    "id": "699eb9a6-dad8-40f3-a5e9-6f223cb35100",
+    "dateTime": "2022-07-09T10:37:45.364+00:00",
+    "status": 200,
+    "message": "포인트 총합 조회 성공",
+    "list": {
+        "pointTotal": 3
+    }
+}
+```
 
 </div>
 </details>
@@ -202,7 +220,7 @@ post /review/update
         "reviewId": "30e908a7-0f1a-438c-8723-8f03fe7356e0",
         "content": "리뷰내용",
         "attachedPhotoIds": [
-            "https://triplebucket.s3.ap-northeast-2.amazonaws.com/review/1da0a34f-8396-44c2-8384-1cdc10adf315test.png"
+            "35603c13-2ee6-467e-9d41-3e41e6675aab"
         ],
         "placeId": "4c8f1f79-f28d-45ff-8f8f-ad0bb38520c3",
         "userId": "f123e027-bdc3-4bf2-8ec3-f781cf8d2628"
@@ -221,7 +239,27 @@ post /review/update
 DELETE /review/{userId}/{reviewId}
 
 ```
-![image](https://user-images.githubusercontent.com/78741410/178097478-18cfcdfe-cd60-4f08-ae71-9daef2c642b6.png)
+
+``` json
+{
+    "id": "f99efac9-c5cf-4323-9fb7-f18d81c2d800",
+    "dateTime": "2022-07-09T10:35:27.616+00:00",
+    "status": 200,
+    "message": "리뷰 삭제 성공",
+    "list": {
+        "type": "REVIEW",
+        "action": "DELETE",
+        "reviewId": "30e908a7-0f1a-438c-8723-8f03fe7356e0",
+        "content": "리뷰내용",
+        "attachedPhotoIds": [
+            "35603c13-2ee6-467e-9d41-3e41e6675aab"
+        ],
+        "placeId": "4c8f1f79-f28d-45ff-8f8f-ad0bb38520c3",
+        "userId": "f123e027-bdc3-4bf2-8ec3-f781cf8d2628"
+    }
+}
+```
+	
 </div>
 </details>
 
@@ -235,7 +273,21 @@ GET /review
  "userId": String
 }
 ```
-![image](https://user-images.githubusercontent.com/78741410/178092576-23549427-3e3d-486e-b113-d52f0dfb2dee.png)
+	
+``` json
+{
+    "id": "f3391279-15e4-4a76-ac4f-d09f42d3f2f8",
+    "dateTime": "2022-07-09T10:33:45.289+00:00",
+    "status": 200,
+    "message": "내가 작성한 리뷰 조회 성공",
+    "list": [
+        {
+            "reviewId": "30e908a7-0f1a-438c-8723-8f03fe7356e0",
+            "content": "리뷰내용"
+        }
+    ]
+}
+```
 
 </div>
 </details>
