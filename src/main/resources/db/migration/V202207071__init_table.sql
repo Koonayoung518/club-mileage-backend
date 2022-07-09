@@ -18,7 +18,7 @@ CREATE TABLE place (
 
 CREATE TABLE review (
     review_id VARCHAR(63) PRIMARY KEY,
-    created_at DATE,
+    created_at TIMESTAMP,
     content VARCHAR(255),
     place_id VARCHAR(63),
     FOREIGN KEY(place_id) REFERENCES place(place_id),
@@ -36,9 +36,9 @@ CREATE TABLE photo (
 
 CREATE TABLE point (
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    created_at DATE,
+    created_at TIMESTAMP,
     event_type VARCHAR(63),
-    point Long,
+    point_score BIGINT,
     target_id VARCHAR(63),
     users_id VARCHAR(63),
     FOREIGN KEY(users_id) REFERENCES users(users_id)
@@ -46,10 +46,10 @@ CREATE TABLE point (
 
 CREATE TABLE point_history (
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    created_at DATE,
+    created_at TIMESTAMP,
     event_type VARCHAR(63),
     action_type VARCHAR(63),
-    point Long,
+    point BIGINT,
     target_id VARCHAR(63),
     users_id VARCHAR(63),
     FOREIGN KEY(users_id) REFERENCES users(users_id)
@@ -57,7 +57,7 @@ CREATE TABLE point_history (
 
 CREATE TABLE point_total (
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    total Long,
+    total BIGINT,
     users_id VARCHAR(63),
     FOREIGN KEY(users_id) REFERENCES users(users_id)
 );

@@ -28,23 +28,24 @@ public class ReviewController {
     @PostMapping("/review")
     public ResponseEntity<ResponseMessage> registerReview(@RequestPart(name = "file")List<MultipartFile> fileList,
                                                           @RequestPart(name = "requestDto")RequestReview.register requestDto){
-         reviewService.registerReview(fileList,requestDto);
+         ResponseReview.review response = reviewService.registerReview(fileList,requestDto);
 
         return new ResponseEntity<>(ResponseMessage.builder()
                 .status(HttpStatus.OK.value())
                 .message("리뷰 등록 성공")
-
+                .list(response)
                 .build(), HttpStatus.OK);
     }
 
-    @PostMapping("/review/{reviewId}")
+    @PostMapping("/review/update")
     public ResponseEntity<ResponseMessage> updateReview(@RequestPart(name = "file")List<MultipartFile> fileList,
                                                           @RequestPart(name = "requestDto")RequestReview.update requestDto){
-        reviewService.updateReview(fileList,requestDto);
+        ResponseReview.review response = reviewService.updateReview(fileList,requestDto);
 
         return new ResponseEntity<>(ResponseMessage.builder()
                 .status(HttpStatus.OK.value())
                 .message("리뷰 수정 성공")
+                .list(response)
                 .build(), HttpStatus.OK);
     }
 
@@ -60,12 +61,13 @@ public class ReviewController {
     }
 
     @DeleteMapping("/review/{userId}/{reviewId}")
-    public ResponseEntity<ResponseMessage> deleteReview(@PathVariable String userId, @PathVariable String reviewId){
-        reviewService.deleteReview(userId, reviewId);
+    public ResponseEntity<ResponseMessage> deleteReview(@PathVariable(required = true) String userId, @PathVariable(required = true) String reviewId){
+        ResponseReview.review response = reviewService.deleteReview(userId, reviewId);
 
         return new ResponseEntity<>(ResponseMessage.builder()
                 .status(HttpStatus.OK.value())
                 .message("리뷰 삭제 성공")
+                .list(response)
                 .build(), HttpStatus.OK);
 
     }

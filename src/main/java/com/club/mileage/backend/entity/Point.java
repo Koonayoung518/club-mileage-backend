@@ -30,8 +30,8 @@ public class Point {
     @Enumerated(value = EnumType.STRING)
     private EventType eventType;
 
-    @Column(name = "point")
-    private Long point;
+    @Column(name = "point_score")
+    private Long pointScore;
 
     @Column(name = "target_id")
     private String targetId;
@@ -41,13 +41,13 @@ public class Point {
     private Users users;
 
     @Builder
-    public Point (EventType eventType, Long point, String targetId, Users users){
+    public Point (EventType eventType, Long pointScore, String targetId, Users users){
         this.eventType = eventType;
-        this.point = point;
+        this.pointScore = pointScore;
         this.targetId = targetId;
         this.users = users;
     }
-    public void updatePoint(Long point){
-        this.point = point;
+    public void updatePoint(Long pointScore){
+        this.pointScore = pointScore;
     }
 }

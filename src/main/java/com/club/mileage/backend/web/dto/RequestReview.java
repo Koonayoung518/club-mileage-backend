@@ -19,4 +19,11 @@ public class RequestReview {
         private String content;
         private String placeId;
     }
+
+    @Builder
+    @Data
+    public static class mockData{
+        private String nickName;
+        private String placeName;
+    }
 }

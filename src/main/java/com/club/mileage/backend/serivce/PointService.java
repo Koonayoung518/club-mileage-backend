@@ -38,12 +38,18 @@ public class PointService implements PointServiceInterface {
         Review review = reviewRepository.findById(requestDto.getReviewId()).orElseThrow(()-> new NotFoundReviewException());
 
         Long mileage = 0L;
-        if(!Optional.ofNullable(review.getContent()).isEmpty()) // 1자 이상 텍스트 작성 시 1점
+        if(Optional.ofNullable(requestDto.getContent()).isPresent()){
+            if(requestDto.getContent().length()>0)
+                mileage++;
+        } // 1자 이상 텍스트 작성 시 1점
+
+        if(!requestDto.getAttachedPhotoIds().isEmpty()){
             mileage++;
-        if(!Optional.ofNullable(requestDto.getAttachedPhotoIds()).isEmpty()) //1장 이상 사진 첨부 시 1점
+        } //1장 이상 사진 첨부 시 1점
+
+        if(review.getReviewType().equals(ReviewType.FIRST)){
             mileage++;
-        if(review.getReviewType().equals(ReviewType.FIRST))// 특정 장소에 첫 리뷰 작성 시 1점
-            mileage++;
+        }// 특정 장소에 첫 리뷰 작성 시 1점
 
         Point point = pointRepository.findByUsersAndTargetId(users, requestDto.getReviewId());
         if(point != null){//이미 적립한 포인트가 있을 경우
@@ -52,7 +58,7 @@ public class PointService implements PointServiceInterface {
         //포인트 등록
            point = Point.builder()
                     .eventType(EventType.REVIEW)
-                    .point(mileage)
+                    .pointScore(mileage)
                     .targetId(review.getReviewId())
                     .users(users)
                     .build();
@@ -65,7 +71,6 @@ public class PointService implements PointServiceInterface {
                 .action(requestDto.getAction())
                 .point(mileage)
                 .build();
-        System.out.println("포인트 적립!");
         return response;
     }
 
@@ -77,22 +82,32 @@ public class PointService implements PointServiceInterface {
         Review review = reviewRepository.findById(requestDto.getReviewId()).orElseThrow(()-> new NotFoundReviewException());
 
         Long mileage = 0L;
-        if(!Optional.ofNullable(review.getContent()).isEmpty()) // 1자 이상 텍스트 작성 시 1점
+        if(Optional.ofNullable(requestDto.getContent()).isPresent()){
+            if(requestDto.getContent().length()>0)
+                mileage++;
+        } // 1자 이상 텍스트 작성 시 1점
+
+        if(!requestDto.getAttachedPhotoIds().isEmpty()){
             mileage++;
-        if(!Optional.ofNullable(requestDto.getAttachedPhotoIds()).isEmpty()) //1장 이상 사진 첨부 시 1점
+        } //1장 이상 사진 첨부 시 1점
+
+        if(review.getReviewType().equals(ReviewType.FIRST)){
             mileage++;
-        if(review.getReviewType().equals(ReviewType.FIRST))// 특정 장소에 첫 리뷰 작성 시 1점
-            mileage++;
+        }// 특정 장소에 첫 리뷰 작성 시 1점
+
 
         Point point = pointRepository.findByUsersAndTargetId(users, requestDto.getReviewId());
         if(point == null){//포인트가 없을 경우
             throw new FailedUpdatePointException();
         }
-        Long existPoint = point.getPoint(); //수정 전 포인트
+        Long existPoint = point.getPointScore(); //수정 전 포인트
         point.updatePoint(mileage);
 
         if(mileage - existPoint == 0) //포인트 업데이트 안해도 됨
-            return null;
+            return ResponsePoint.updatePoint.builder()
+                    .action(requestDto.getAction())
+                    .point(0L)
+                    .build();
 
         //포인트 업데이트
         updatePoint(requestDto.getType(),requestDto.getAction(), mileage - existPoint, requestDto.getReviewId(), users);
@@ -113,7 +128,7 @@ public class PointService implements PointServiceInterface {
         if(point == null){//포인트가 없을 경우
             throw new FailedUpdatePointException();
         }
-        Long mileage = -point.getPoint();
+        Long mileage = -point.getPointScore();
 
         //포인트 삭제
         pointRepository.delete(point);

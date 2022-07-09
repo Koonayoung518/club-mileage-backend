@@ -17,15 +17,12 @@ import com.club.mileage.backend.repository.PlaceRepository;
 import com.club.mileage.backend.repository.ReviewRepository;
 import com.club.mileage.backend.repository.UsersRepository;
 import com.club.mileage.backend.web.dto.RequestReview;
-import com.club.mileage.backend.web.dto.ResponseMessage;
 import com.club.mileage.backend.web.dto.ResponseReview;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.*;
@@ -41,7 +38,7 @@ public class ReviewService implements ReviewServiceInterface {
     private final WebClient pointWebClient;
     @Override
     @Transactional
-    public void registerReview(List<MultipartFile> fileList, RequestReview.register requestDto){
+    public ResponseReview.review registerReview(List<MultipartFile> fileList, RequestReview.register requestDto){
         Users users = usersRepository.findById(requestDto.getUserId()).orElseThrow(()-> new NotFoundUserException());
 
         Place place = placeRepository.findById(requestDto.getPlaceId()).orElseThrow(()->new NotFoundPlaceException());
@@ -70,27 +67,29 @@ public class ReviewService implements ReviewServiceInterface {
         users.addReview(review);
         place.addReview(review);
 
-        if(!fileList.isEmpty()){//사진이 있을 경우
+        if(fileList !=null && !fileList.isEmpty()){ //사진이 있을 경우
             for(MultipartFile file : fileList){
-                String url = null;
                 try{
-                    url = s3Service.upload(file, "review");
+                    String url = s3Service.upload(file, "review");
+
+                    Photo photo = Photo.builder()
+                            .url(url)
+                            .review(review)
+                            .build();
+                    photo = photoRepository.save(photo);
+                    review.addPhoto(photo);
                 }catch (IOException e){
                     System.out.println("S3 등록 실패");
                 }
-                Photo photo = Photo.builder()
-                        .url(url)
-                        .review(review)
-                        .build();
-                photo = photoRepository.save(photo);
-                review.addPhoto(photo);
             }
         }
+        ResponseReview.review response = getResult(ActionType.ADD.toString(),review);
+        return response;
     }
 
     @Override
     @Transactional
-    public void updateReview(List<MultipartFile> fileList, RequestReview.update requestDto){
+    public ResponseReview.review updateReview(List<MultipartFile> fileList, RequestReview.update requestDto){
         Users users = usersRepository.findById(requestDto.getUserId()).orElseThrow(()-> new NotFoundUserException());
 
         Place place = placeRepository.findById(requestDto.getPlaceId()).orElseThrow(()->new NotFoundPlaceException());
@@ -104,36 +103,37 @@ public class ReviewService implements ReviewServiceInterface {
 
         //기존 리뷰에 사진이 있으면 s3에 저장된 사진 파일 삭제
         List<Photo> photoList = photoRepository.findByReview(review);
-        if(!photoList.isEmpty()){
+        if(photoList != null && !photoList.isEmpty()){
             for(Photo photo : photoList){
-                s3Service.deleteFile(photo.getUrl());
+                if(photo.getUrl() != null)
+                    s3Service.deleteFile(photo.getUrl());
 
                 review.getPhotoList().remove(photo);
                 photoRepository.delete(photo);
             }
         }
-        if(!fileList.isEmpty()){//수정한 리뷰에 사진이 있을 경우
+        if(fileList != null && !fileList.isEmpty()){ //수정한 리뷰에 사진이 있을 경우
             for(MultipartFile file : fileList){
-                String url = null;
                 try{
-                    url = s3Service.upload(file, "review");
+                    String url = s3Service.upload(file, "review");
+                    Photo photo = Photo.builder()
+                            .url(url)
+                            .review(review)
+                            .build();
+                    photo = photoRepository.save(photo);
+                    review.addPhoto(photo);
                 }catch (IOException e){
                     System.out.println("S3 등록 실패");
                 }
-                Photo photo = Photo.builder()
-                        .url(url)
-                        .review(review)
-                        .build();
-                photo = photoRepository.save(photo);
-                review.addPhoto(photo);
             }
         }
-
+        ResponseReview.review response = getResult(ActionType.MOD.toString(),review);
+        return response;
     }
 
     @Transactional
     @Override
-    public void deleteReview(String userId, String reviewId){
+    public ResponseReview.review deleteReview(String userId, String reviewId){
         Users users = usersRepository.findById(userId).orElseThrow(()-> new NotFoundUserException());
 
         Review review = reviewRepository.findByUsersAndReviewId(users, reviewId);
@@ -141,8 +141,9 @@ public class ReviewService implements ReviewServiceInterface {
             throw new NotFoundReviewException();
         }
         //리뷰에 사진이 있으면 s3에 저장된 사진 파일 삭제
-        if(!review.getPhotoList().isEmpty()){
+        if(review.getPhotoList() != null && !review.getPhotoList().isEmpty()){
             for(Photo photo : review.getPhotoList()){
+                if(photo.getUrl() != null)
                 s3Service.deleteFile(photo.getUrl());
             }
         }
@@ -151,7 +152,11 @@ public class ReviewService implements ReviewServiceInterface {
         place.getReviewList().remove(review);
         users.getReviewList().remove(review);
 
+        ResponseReview.review response = getResult(ActionType.DELETE.toString(),review);
         reviewRepository.delete(review);
+
+        return response;
+
     }
 
     @Transactional
@@ -173,5 +178,25 @@ public class ReviewService implements ReviewServiceInterface {
         return list;
     }
 
+    private ResponseReview.review getResult(String actionType, Review review){
+
+        List<String> photoList = new ArrayList<>();
+        if(!Optional.ofNullable(review.getPhotoList()).isEmpty()){//사진이 있으면
+            for(Photo photo : review.getPhotoList()){
+                photoList.add(photo.getUrl());
+            }
+        }
+        ResponseReview.review result = ResponseReview.review.builder()
+                .type(EventType.REVIEW.toString())
+                .action(actionType)
+                .reviewId(review.getReviewId())
+                .content(review.getContent())
+                .attachedPhotoIds(photoList)
+                .userId(review.getUsers().getUsersId())
+                .placeId(review.getPlace().getPlaceId())
+                .build();
+
+        return result;
+    }
 
 }

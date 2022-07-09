@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -78,7 +77,7 @@ public class PointServiceTests {
         pointService.addReviewPoint(requestDto);
         List<Point> pointList = pointRepository.findByUsers(users);
         for(Point point : pointList){
-            assertEquals(point.getPoint(), 1);
+            assertEquals(point.getPointScore(), 1);
         }
     }
     @Test
@@ -108,6 +107,7 @@ public class PointServiceTests {
                 .reviewType(ReviewType.FIRST)
                 .build();
         review = reviewRepository.save(review);
+        assertEquals(0, review.getPhotoList().size());
         //포인트 적립
         RequestPoint.register requestDto = RequestPoint.register.builder()
                 .type("REVIEW")
@@ -120,7 +120,7 @@ public class PointServiceTests {
         pointService.addReviewPoint(requestDto);
         List<Point> pointList = pointRepository.findByUsers(users);
         for(Point point : pointList){
-            assertEquals(point.getPoint(), 2);
+            assertEquals(point.getPointScore(), 2);
         }
     }
     @Test
@@ -166,7 +166,7 @@ public class PointServiceTests {
         pointService.addReviewPoint(requestDto);
         List<Point> pointList = pointRepository.findByUsers(users);
         for(Point point : pointList){
-            assertEquals(point.getPoint(), 2);
+            assertEquals(point.getPointScore(), 2);
         }
     }
 
@@ -212,7 +212,7 @@ public class PointServiceTests {
         pointService.addReviewPoint(requestDto);
         List<Point> pointList = pointRepository.findByUsers(users);
         for(Point point : pointList){
-            assertEquals(point.getPoint(), 1);
+            assertEquals(point.getPointScore(), 1);
         }
     }
 
@@ -259,7 +259,7 @@ public class PointServiceTests {
         pointService.addReviewPoint(requestDto);
         List<Point> pointList = pointRepository.findByUsers(users);
         for(Point point : pointList){
-            assertEquals(point.getPoint(), 3);
+            assertEquals(point.getPointScore(), 3);
         }
     }
     @Test
@@ -315,7 +315,7 @@ public class PointServiceTests {
         pointService.modReviewPoint(requestDto1);
         List<Point> pointList = pointRepository.findByUsers(users);
         for(Point point : pointList){
-            assertEquals(point.getPoint(), 2);
+            assertEquals(point.getPointScore(), 2);
         }
         List<PointHistory> pointHistoryList = pointHistoryRepository.findByUsers(users);
 
@@ -378,7 +378,7 @@ public class PointServiceTests {
 
         List<Point> pointList = pointRepository.findByUsers(users);
         for(Point point : pointList){
-            assertEquals(point.getPoint(), 1);
+            assertEquals(point.getPointScore(), 1);
         }
         List<PointHistory> pointHistoryList = pointHistoryRepository.findByUsers(users);
 
@@ -441,7 +441,7 @@ public class PointServiceTests {
 
         List<Point> pointList = pointRepository.findByUsers(users);
         for(Point point : pointList){
-            assertEquals(2, point.getPoint());
+            assertEquals(2, point.getPointScore());
         }
         List<PointHistory> pointHistoryList = pointHistoryRepository.findByUsers(users);
         assertEquals(1, pointHistoryList.size());

@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface PointRepository extends JpaRepository<Point, Long> {
-    @Query(value = "select sum(p.point) from Point p inner join p.users where p.users = :users")
+    @Query(value = "select sum(p.pointScore) from Point p inner join p.users where p.users = :users")
     Long findByTotal(Users users);
 
     List<Point> findByUsers(Users users);
