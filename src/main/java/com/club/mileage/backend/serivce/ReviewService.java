@@ -183,7 +183,7 @@ public class ReviewService implements ReviewServiceInterface {
         List<String> photoList = new ArrayList<>();
         if(!Optional.ofNullable(review.getPhotoList()).isEmpty()){//사진이 있으면
             for(Photo photo : review.getPhotoList()){
-                photoList.add(photo.getUrl());
+                photoList.add(photo.getPhotoId());
             }
         }
         ResponseReview.review result = ResponseReview.review.builder()

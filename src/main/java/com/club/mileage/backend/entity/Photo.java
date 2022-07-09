@@ -14,7 +14,7 @@ import java.util.UUID;
 public class Photo {
     @Id
     @Column(name = "photo_id")
-    private String id = UUID.randomUUID().toString();
+    private String photoId = UUID.randomUUID().toString();
 
     @Column(name = "url")
     private String url;
