@@ -19,7 +19,7 @@
 <div markdown="1">    
 
 ``` json
-post /events
+POST /events
 {
         "type": String,
         "action": String,
@@ -32,11 +32,34 @@ post /events
 ```
 리뷰 등록 시
 
-![image](https://user-images.githubusercontent.com/78741410/178099200-c35004f2-7911-49ba-a33c-2d63bc37f56e.png)
+``` json
+{
+    "id": "a8593965-4bac-4004-a65a-6d11bb58c33c",
+    "dateTime": "2022-07-09T10:29:12.482+00:00",
+    "status": 200,
+    "message": "포인트 적립 성공",
+    "list": {
+        "action": "ADD",
+        "point": 2
+    }
+}
+```
+
 
 리뷰 수정 시
 	
-![image](https://user-images.githubusercontent.com/78741410/178101171-d323d064-b844-4f44-bdae-bfac6c60b940.png)
+``` json
+{
+    "id": "ce61f2bf-0419-4a8e-877a-6abfafef39de",
+    "dateTime": "2022-07-09T10:32:04.709+00:00",
+    "status": 200,
+    "message": "포인트 적립 성공",
+    "list": {
+        "action": "MOD",
+        "point": 1
+    }
+}
+```
 	
 리뷰 삭제 시
 
@@ -53,7 +76,7 @@ post /events
 <div markdown="1">    
 
 ``` json
-get /events
+GET /events
 {
         "userId": String
 }
@@ -102,7 +125,7 @@ get /events
 <div markdown="1">    
 
 ``` json
-get /point/total
+GET /point/total
 {
    "userId": String
 }
@@ -118,7 +141,7 @@ get /point/total
 <div markdown="1">    
 
 ``` json
-post /review
+POST /review
 {
   "file" : MultipartFile
 	"requestDto" :{
@@ -128,7 +151,24 @@ post /review
   }
 }
 ```
-![image](https://user-images.githubusercontent.com/78741410/178096289-d57f84f5-0e92-4731-864f-212555c5470a.png)
+
+``` json
+{
+    "id": "14c43c04-d050-4bd2-86f5-f120468038db",
+    "dateTime": "2022-07-09T10:27:54.677+00:00",
+    "status": 200,
+    "message": "리뷰 등록 성공",
+    "list": {
+        "type": "REVIEW",
+        "action": "ADD",
+        "reviewId": "30e908a7-0f1a-438c-8723-8f03fe7356e0",
+        "content": "리뷰내용",
+        "attachedPhotoIds": [],
+        "placeId": "4c8f1f79-f28d-45ff-8f8f-ad0bb38520c3",
+        "userId": "f123e027-bdc3-4bf2-8ec3-f781cf8d2628"
+    }
+}
+```
 
 </div>
 </details>
@@ -148,7 +188,27 @@ post /review/update
   }
 }
 ```
-![image](https://user-images.githubusercontent.com/78741410/178097436-be8dc95a-e4cd-4dfb-b73a-3a40fc253b06.png)
+
+``` json
+	
+{
+    "id": "94f75ce4-c844-4c5e-b241-337cca983cf5",
+    "dateTime": "2022-07-09T10:31:03.642+00:00",
+    "status": 200,
+    "message": "리뷰 수정 성공",
+    "list": {
+        "type": "REVIEW",
+        "action": "MOD",
+        "reviewId": "30e908a7-0f1a-438c-8723-8f03fe7356e0",
+        "content": "리뷰내용",
+        "attachedPhotoIds": [
+            "https://triplebucket.s3.ap-northeast-2.amazonaws.com/review/1da0a34f-8396-44c2-8384-1cdc10adf315test.png"
+        ],
+        "placeId": "4c8f1f79-f28d-45ff-8f8f-ad0bb38520c3",
+        "userId": "f123e027-bdc3-4bf2-8ec3-f781cf8d2628"
+    }
+}
+```
 
 </div>
 </details>
@@ -158,7 +218,7 @@ post /review/update
 <div markdown="1">    
 
 ``` json
-delete /review/{userId}/{reviewId}
+DELETE /review/{userId}/{reviewId}
 
 ```
 ![image](https://user-images.githubusercontent.com/78741410/178097478-18cfcdfe-cd60-4f08-ae71-9daef2c642b6.png)
