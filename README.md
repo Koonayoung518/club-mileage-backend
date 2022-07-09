@@ -35,6 +35,13 @@ post /events
 ![image](https://user-images.githubusercontent.com/78741410/178099200-c35004f2-7911-49ba-a33c-2d63bc37f56e.png)
 
 리뷰 수정 시
+	
+![image](https://user-images.githubusercontent.com/78741410/178101171-d323d064-b844-4f44-bdae-bfac6c60b940.png)
+	
+리뷰 삭제 시
+
+![image](https://user-images.githubusercontent.com/78741410/178100962-31346e5c-2767-4db6-b891-064c9956bf57.png)
+
 
 
 </div>
