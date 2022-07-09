@@ -3,6 +3,8 @@
 ----------------
 ## ec2 서버 주소
 
+http://ec2-43-200-115-220.ap-northeast-2.compute.amazonaws.com:8080
+
 ## 기술 스택
 - Spring boot
 - Java
