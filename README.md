@@ -5,6 +5,8 @@
 
 http://ec2-43-200-115-220.ap-northeast-2.compute.amazonaws.com:8080
 
+POST /mock 으로 요청을 먼저 보낸 후 얻은 userId와 placeId로 사용가능합니다.
+
 ## 기술 스택
 - Spring boot
 - Java
